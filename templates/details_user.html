@@ -1,0 +1,19 @@
+<!-- prettier-ignore -->
+{% extends 'base.html'%} 
+{% block title%}New User{% endblock%}
+<!--  -->
+{% block content %}
+<!-- HTML BODY TAG CONTENT OF WEBPAGE -->
+
+<div id="user">
+    <img src= {{ url_for('static', filename=user.img_url) }} alt="User Profile Img could not be loaded">
+    <h2>{{ user.first_name }} {{user.last_name}}</h2>
+    <form id="edit_buttun_form" action="/users/{{user.id}}/edit">
+        <button>Edit</button>
+    </form>
+    <form id="delete_button_form" action="/users/{{user.id}}/delete" method="POST">
+        <button>X Delete X</button>
+    </form>
+</div>
+
+{% endblock %}
