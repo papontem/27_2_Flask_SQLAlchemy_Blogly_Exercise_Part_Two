@@ -102,23 +102,58 @@ def delete_the_user(user_id):
     db.session.commit()
     return redirect("/users")
 
+
 # Add Post Routes
-# GET /users/[user-id]/posts/new
+# GET /users/<int:user_id>/posts/new
+@app.route('/users/<int:user_id>/posts/new')
+def new_post(user_id):
+    """ Show form to add a post for that user. """
+    
+    user = User.query.get_or_404(user_id)
+    
+    return render_template('new_post_form.html', user=user)
 
-# Show form to add a post for that user.
-# POST /users/[user-id]/posts/new
+# POST /users/<int:user_id>/posts/new
+@app.route('/users/<int:user_id>/posts/new',methods=["POST"])
+def new_post_form_submitted(user_id):
+    """ Process the add post form; add post to posts table with user_id  and redirect to the user detail page. """
+    # GRAB THE USER
+    user = User.query.get_or_404(user_id)
+    # GRAB FORM DATA
+    title = request.form["title"]
+    content = request.form["content"]
+    # CREATE POST
+    new_post = Post.create_post(user, title, content)
+    db.session.add(new_post)
+    db.session.commit()
+    # print(new_post)
+    return redirect(f'/users/{user.id}')
 
-# Handle add form; add post and redirect to the user detail page.
-# GET /posts/[post-id]
 
-# Show a post.
-# Show buttons to edit and delete the post.
-# GET /posts/[post-id]/edit
+# TODO: 
+# # GET /posts/[post-id]
+# @app.route('/')
+# def func3():
+#     """
+#         Show a post.
+#         Show buttons to edit and delete the post.
+#     """
+#     return 
 
-# Show form to edit a post, and to cancel (back to user page).
-# POST /posts/[post-id]/edit
-
-# Handle editing of a post. Redirect back to the post view.
-# POST /posts/[post-id]/delete
-
-# Delete the post.
+# # GET /posts/[post-id]/edit
+# @app.route('/')
+# def func2():
+#     """ Show form to edit a post, and to cancel (back to user page). """
+    
+#     return
+# # POST /posts/[post-id]/edit
+# @app.route('/')
+# def func1():
+#     """ Handle editing of a post. Redirect back to the post view. """
+    
+#     return
+# # POST /posts/[post-id]/delete
+# @app.route('/')
+# def func0():
+#     """Delete the post."""
+#     return

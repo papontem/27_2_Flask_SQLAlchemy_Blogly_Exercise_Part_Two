@@ -78,7 +78,7 @@ div#user_name_and_options {
 form#edit_button_form{
 	display: inline;
 }
-form#edit_button_form button{
+form button{
 	color: white;
 	background-color: rgb(115, 145, 250);
 }
@@ -95,7 +95,4 @@ form#delete_button_form button{
 div#user_posts ul li{ 
 	margin: 5px;
 }
-div#user_posts form#add_button_form button { 
-	color: white;
-	background-color: rgb(115, 145, 250);
-}
+
