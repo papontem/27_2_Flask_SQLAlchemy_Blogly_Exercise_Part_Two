@@ -1,6 +1,6 @@
-"""Seed file to make sample data for blogly db."""
+'''Seed file to make sample data for blogly db.'''
 
-from models import User, db
+from models import User, Post, db
 from app import app
 
 # Create all tables
@@ -11,14 +11,40 @@ db.create_all()
 User.query.delete()
 
 # Add Users
-whiskey = User(first_name='Whiskey',last_name='Tango',img_url='https://unsplash.com/photos/TSkUCyCuVH4' )
-bowser = User(first_name='Bowser Jr.',last_name='Koopa',img_url='https://unsplash.com/photos/X-0FisCRIaA' )
-spike = User(first_name='Spike',last_name='Chain',img_url= 'https://unsplash.com/photos/zqhe4qjVTJI' )
+whiskey  = User( first_name='Whiskey'    ,last_name='Tango'     ,img_url='https://images.unsplash.com/photo-1615887023544-3a566f29d822?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80' )
+bowser   = User( first_name='Bowser Jr.' ,last_name='Koopa'     ,img_url='https://images.unsplash.com/photo-1585696862208-ca12defa3a78?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80' )
+spike    = User( first_name='Spike'      ,last_name='Chain'     ,img_url='https://images.unsplash.com/photo-1523626797181-8c5ae80d40c2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1335&q=80' )
+river    = User( first_name='River'      ,last_name='Nile'      ,img_url='https://images.unsplash.com/photo-1689799980599-60c7b1846ffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3346&q=80')
+summer   = User( first_name='Summer'     ,last_name='Winter'    ,img_url='https://images.unsplash.com/photo-1542481694-f6539f365918?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80')
+joaquin  = User( first_name='Joaquin'    ,last_name='Phoenix'   ,img_url='https://images.unsplash.com/photo-1622599511051-16f55a1234d0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1336&q=80')
+octavia  = User( first_name='Octavia'    ,last_name='Spencer&d' ,img_url='https://plus.unsplash.com/premium_photo-1682893682272-46534e543c50?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80')
+larry    = User( first_name='Larry'      ,last_name='David'     ,img_url='https://plus.unsplash.com/premium_photo-1664456329834-8b832667ffb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2344&q=80')
+kurt     = User( first_name='Kurt'       ,last_name='Cobain'    )
+rain     = User( first_name='Rain'       ,last_name='Phoenix'   )
 
 # Add new objects to session, so they'll persist
-db.session.add(whiskey)
-db.session.add(bowser)
-db.session.add(spike)
+db.session.add_all([whiskey,bowser,spike,river,summer,joaquin,octavia,larry,kurt,rain])
+
+# Commit--otherwise, this never gets saved!
+db.session.commit()
+
+# Add Posts
+post_1 = { "title": "A Beautiful Day","content": "Today, the weather was perfect."}
+post_2 = { "title": "Delicious Recipes", "content": "I tried a new recipe today."}
+post_3 = { "title": "Exploring New Places", "content": "Visited an amazing new place today."}
+
+author_user_1 = whiskey  # User object
+author_user_2 = bowser 
+author_user_3 = spike
+
+# Call the create_post function to add the posts to the database we dod this this way because i cant manually put it a datetime yet.
+# Been advised to have the sqlalchemy server have call its now() function.
+post_1 = Post.create_post(author_user_1, post_1["title"], post_1["content"])
+post_2 = Post.create_post(author_user_2, post_2["title"], post_2["content"])
+post_3 = Post.create_post(author_user_3, post_3["title"], post_3["content"])
+
+# Add new objects to session, so they'll persist
+db.session.add_all([post_1,post_2,post_3])
 
 # Commit--otherwise, this never gets saved!
 db.session.commit()

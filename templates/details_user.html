@@ -1,19 +1,41 @@
 <!-- prettier-ignore -->
 {% extends 'base.html'%} 
-{% block title%}New User{% endblock%}
+{% block title%}{{ user.first_name }} {{user.last_name}}{% endblock%}
 <!--  -->
 {% block content %}
 <!-- HTML BODY TAG CONTENT OF WEBPAGE -->
 
-<div id="user">
-    <img src= {{ url_for('static', filename=user.img_url) }} alt="User Profile Img could not be loaded">
-    <h2>{{ user.first_name }} {{user.last_name}}</h2>
-    <form id="edit_buttun_form" action="/users/{{user.id}}/edit">
-        <button>Edit</button>
-    </form>
-    <form id="delete_button_form" action="/users/{{user.id}}/delete" method="POST">
-        <button>X Delete X</button>
-    </form>
+<div id="user_container">
+    <div id="user_img_container">
+        <!-- these two work for static images  -->
+        <!-- <img src="{{ '/static/imgs/' + user.img_url + '.jpg' }}" alt="User Profile Img Couldn't Be Loaded">  -->
+        <!-- <img id="user_profile_img" src= "{{ url_for( 'static', filename='imgs/'+user.img_url+'.jpg' ) }}" alt="User Profile Img Couldn't Be Loaded"> -->
+        <img id="user_profile_img" src= "{{user.img_url}}" alt="User Profile Img Couldn't Be Loaded">
+    </div>
+    <div id="user_info_and_posts">
+        <div id="user_name_and_options">
+            <h2>{{ user.first_name }} {{user.last_name}}</h2>
+            <form id="edit_button_form" action="/users/{{user.id}}/edit">
+                <button>Edit</button>
+            </form>
+            <form id="delete_button_form" action="/users/{{user.id}}/delete" method="POST">
+                <button>X Delete X</button>
+            </form>
+        </div>
+        <div id="user_posts">
+            <h4>Posts</h4>
+            <ul>
+                <!-- ADD ROUTE TO POST DETAILS -->
+                {% for post in user.posts %}
+                <li><a href="">{{ post.title }}</a></li>
+                {% endfor %}
+            </ul>
+            <!-- ADD ROUTE TO CREATE A POST FORM -->
+            <form id="add_button_form"   action="">
+                <button>Add Post</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

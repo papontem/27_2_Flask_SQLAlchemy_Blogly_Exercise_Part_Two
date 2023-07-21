@@ -44,9 +44,58 @@ main#content {
 	border: solid 2px green;
 	background-color: rgba(144, 255, 144, 0.5);
 }
-form#edit_buttun_form{
+
+
+div#user_container {
+  display: flex;
+  justify-content: left;
+  align-items: flex-start;
+}
+
+/* Style for the user image container on the left */
+div#user_img_container {
+  margin: 5px 30px 20px 5px; /* Add spacing between the image and user info/posts */
+}
+
+/* Style for the user profile image */
+img#user_profile_img {
+  width: 20dvw; /* Adjust the image width as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+
+/* Style for the user info and posts container on the right */
+div#user_info_and_posts {
+  flex: 1; /* Allow it to grow and take up remaining space */
+}
+
+/* Style for the user name and options */
+div#user_name_and_options {
+  display: block;
+  margin-bottom: 10px; /* Add spacing between name/options and posts */
+}
+
+/* Style for the edit and delete buttons */
+form#edit_button_form{
 	display: inline;
 }
+form#edit_button_form button{
+	color: white;
+	background-color: rgb(115, 145, 250);
+}
+
 form#delete_button_form{
 	display: inline;
+}
+form#delete_button_form button{
+	color: white;
+	background-color: rgb(250, 115, 115);
+}
+
+/* Style for the user posts */
+div#user_posts ul li{ 
+	margin: 5px;
+}
+div#user_posts form#add_button_form button { 
+	color: white;
+	background-color: rgb(115, 145, 250);
 }

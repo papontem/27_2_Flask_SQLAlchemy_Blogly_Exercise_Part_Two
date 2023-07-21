@@ -2,7 +2,7 @@
 
 from flask import Flask, request, render_template, redirect, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User
+from models import db, connect_db, User, Post
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -61,6 +61,7 @@ def detail_user(user_id):
         Have a button to get to their edit page,
           and a button to delete the user.
     """
+
     user = User.query.get_or_404(user_id)
     return render_template("details_user.html", user=user)
 
@@ -71,12 +72,14 @@ def show_user_edit_page(user_id):
         Have a cancel button that returns to the detail page for a user,
           and a save button that updates the user.
     """
+
     user = User.query.get_or_404(user_id)
     return render_template("edit_user.html", user=user)
 
 @app.route('/users/<int:user_id>/edit', methods=["POST"])
 def edit_the_user(user_id):
     """Process the edit form, returning the user to the /users page."""
+
     edit_first_name = request.form["first_name"]
     edit_last_name = request.form["last_name"]
     edit_img_url = request.form["img_url"]
@@ -98,3 +101,24 @@ def delete_the_user(user_id):
     db.session.delete(User.query.get_or_404(user_id))
     db.session.commit()
     return redirect("/users")
+
+# Add Post Routes
+# GET /users/[user-id]/posts/new
+
+# Show form to add a post for that user.
+# POST /users/[user-id]/posts/new
+
+# Handle add form; add post and redirect to the user detail page.
+# GET /posts/[post-id]
+
+# Show a post.
+# Show buttons to edit and delete the post.
+# GET /posts/[post-id]/edit
+
+# Show form to edit a post, and to cancel (back to user page).
+# POST /posts/[post-id]/edit
+
+# Handle editing of a post. Redirect back to the post view.
+# POST /posts/[post-id]/delete
+
+# Delete the post.
