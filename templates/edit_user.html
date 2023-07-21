@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 {% extends 'base.html'%} 
-{% block title%}New User{% endblock%}
+{% block title%}Edit User {{user.id}} {% endblock%}
 <!--  -->
 {% block content %}
 <!-- HTML BODY TAG CONTENT OF WEBPAGE -->
@@ -21,7 +21,7 @@
     <br>
     <button>Save</button>
 </form>
-<form action="/users/{{user.id}}">
+<form id="cancel_button_form" action="/users/{{user.id}}">
     <button> &lt; Cancel &lt; </button>
 </form>
 {% endblock %}

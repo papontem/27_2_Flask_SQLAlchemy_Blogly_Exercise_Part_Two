@@ -39,10 +39,10 @@
 			<ul>
 				<!-- ADD ROUTE TO POST DETAILS -->
 				{% if user.posts %} {% for post in user.posts %}
-				<li><a href="">{{ post.title }}</a></li>
+				<li><a href="/posts/{{ post.id }}">{{ post.title }}</a></li>
 				{% endfor %} {% endif %}
 			</ul>
-			<!-- ADD ROUTE TO CREATE A POST FORM  |      PAM: DOING.....-->
+			
 			<form id="add_button_form" action="/users/{{user.id}}/posts/new">
 				<button>Add Post</button>
 			</form>

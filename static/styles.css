@@ -82,7 +82,9 @@ form button{
 	color: white;
 	background-color: rgb(115, 145, 250);
 }
-
+form#cancel_button_form{
+	display: inline;
+}
 form#delete_button_form{
 	display: inline;
 }
