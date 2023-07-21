@@ -10,11 +10,13 @@
 		<!-- these two work for static images  -->
 		<!-- <img src="{{ '/static/imgs/' + user.img_url + '.jpg' }}" alt="User Profile Img Couldn't Be Loaded">  -->
 		<!-- <img id="user_profile_img" src= "{{ url_for( 'static', filename='imgs/'+user.img_url+'.jpg' ) }}" alt="User Profile Img Couldn't Be Loaded"> -->
-		{% if user.img_url is defined and user.img_url is string and user.img_url != 'no_url_given' %}
+		{% if user.img_url is defined and user.img_url is string and user.img_url != 'no_url_given' and user.img_url != '' %}
         <img
             id="user_profile_img"
             src="{{ user.img_url }}"
             alt="User Profile Img Couldn't Be Loaded" />
+        {% elif user.img_url == ''%}
+        <p>User Profile <br> Img Url Value <br> will be chosen later?</p>
         {% else %}
         <p>User Profile <br> Img Url Value <br> Was Not Valid</p>
         {% endif %}
