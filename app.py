@@ -105,6 +105,7 @@ def delete_the_user(user_id):
 
 
 # Add Post Routes as in user-posts. not post requests.
+
 # GET /users/<int:user_id>/posts/new
 @app.route('/users/<int:user_id>/posts/new')
 def new_post(user_id):

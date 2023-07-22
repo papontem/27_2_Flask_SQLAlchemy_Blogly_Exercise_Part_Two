@@ -51,7 +51,7 @@ post_3 = Post.create_post(author_user_3, post_3["title"], post_3["content"])
 post_4 = Post.create_post(author_user_4, post_4['title'], post_4["content"])
 
 # Add new objects to session, so they'll persist
-db.session.add_all([post_1,post_2,post_3])
+db.session.add_all([post_1,post_2,post_3, post_4])
 
 # Commit--otherwise, this never gets saved!
 db.session.commit()

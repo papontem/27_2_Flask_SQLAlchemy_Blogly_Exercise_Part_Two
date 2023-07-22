@@ -109,7 +109,7 @@ class UserViewsTestCase(TestCase):
                 self.assertEqual(resp.status_code, 200)
                 self.assertIn('TestUser', html)
 
-    def test_show_User(self): 
+    def test_details_User(self): 
         with app.test_client() as client:
             try:
                 resp = client.get(f"/users/{self.user_id}")
@@ -131,9 +131,9 @@ class UserViewsTestCase(TestCase):
         with app.test_client() as client:
             try:
                 d = {
-                    "first_name":"TestUser2",
-                    "last_name":"Tasty2",
-                    "img_url":""
+                        "first_name":"TestUser2",
+                        "last_name":"Tasty2",
+                        "img_url":""
                      }
                 resp = client.post("/users/new", data=d, follow_redirects=False)
                 # html = resp.get_data(as_text=True)
@@ -153,9 +153,9 @@ class UserViewsTestCase(TestCase):
         with app.test_client() as client:
             try:
                 d = {
-                    "first_name": "TestUser2",
-                     "last_name":'Tasty2',
-                     "img_url":""
+                        "first_name": "TestUser2",
+                        "last_name":'Tasty2',
+                        "img_url":""
                      }
                 resp = client.post("/users/new", data=d, follow_redirects=True)
                 html = resp.get_data(as_text=True)
@@ -210,9 +210,9 @@ class UserViewsTestCase(TestCase):
         with app.test_client() as client:
             try:
                 d = {
-                    "first_name": "TestUser1111",
-                     "last_name":'Tasty1111',
-                     "img_url":""
+                        "first_name": "TestUser1111",
+                        "last_name":'Tasty1111',
+                        "img_url":""
                      }
                 resp = client.post(f"/users/{self.user_id}/edit", data=d, follow_redirects=False)
                 html = resp.get_data(as_text=True)
@@ -233,9 +233,9 @@ class UserViewsTestCase(TestCase):
         with app.test_client() as client:
             try:
                 d = {
-                    "first_name": "TestUser1111",
-                     "last_name":'Tasty1111',
-                     "img_url":""
+                        "first_name": "TestUser1111",
+                        "last_name":'Tasty1111',
+                        "img_url":""
                      }
                 resp = client.post(f"/users/{self.user_id}/edit", data=d, follow_redirects=True)
                 html = resp.get_data(as_text=True)
@@ -251,65 +251,262 @@ class UserViewsTestCase(TestCase):
                 self.assertEqual(resp.status_code, 200)
                 self.assertIn("TestUser1111", html)
 
-# TODO ADD TESTING FOR THE NEW ROUTES FROM part 2 POSTs
-# # GET /posts 
-# @app.route('/posts')
-# def list_posts():
-#     """ 
-#         Show posts
-#         Show only their titles within an anchor tag , and their author within an anchor tag
-#         Make these links to view the detail page for the post, and for the user
-#     """
-#     posts = Post.query.all()
+class PostViewsTestCase(TestCase):
+    """Tests for views for Posts."""
 
-#     return render_template("posts.html", posts=posts)
+    def setUp(self):
+        """Add sample test User and sample test post."""
+        db.drop_all()
+        db.create_all()
 
+        #making sure user and post tables are empty!!
+        User.query.delete()
+        Post.query.delete()
 
-# # # GET /posts/<int:post_id>
-# @app.route('/posts/<int:post_id>')
-# def details_post(post_id):
-#     """
-#         Show a post details page.
-#         title, content, author, time of posting
-#         Show buttons to edit and delete the post.
-#     """
-#     post = Post.query.get_or_404(post_id)
+        test_user = User(first_name="TestUser",last_name="Tasty",img_url="")
 
-#     return render_template('details_post.html', post=post)
+        db.session.add(test_user)
+        db.session.commit()
 
-# # # GET /posts/<int:post_id>/edit
-# @app.route('/posts/<int:post_id>/edit')
-# def show_edit_post_form(post_id):
-#     """ Show form to edit a post, and to cancel (back to user page). """
-#     post = Post.query.get_or_404(post_id)
-#     return render_template('edit_post.html', post=post)
+        test_post_data = {"title":"TestPostTitle", "content":"Test Post Content"}
+        test_post = Post.create_post(test_user,test_post_data["title"],test_post_data["content"])
 
-# # # POST /posts/<int:post_id>/edit
-# @app.route('/posts/<int:post_id>/edit', methods=["POST"])
-# def edit_post_form_submitted(post_id):
-#     """ Handle editing of a post. Redirect back to the post view. """
-#     post = Post.query.get_or_404(post_id)
+        db.session.add(test_post)
+        db.session.commit()
+
+        self.user_id = test_user.id
+        self.user = test_user
+
+        self.post_id = test_post.id
+        self.post = test_post
+
+    def tearDown(self):
+        """Clean up any fouled transaction."""
+
+        db.session.rollback()
+
+    def test_list_posts(self):
+        with app.test_client() as client:
+            try:
+                resp = client.get("/posts")
+                html = resp.get_data(as_text=True)
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we were testing that user was correctly sent the list of posts")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+            else:
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn("<h2>Posts</h2>", html)
+                self.assertIn("TestPostTitle", html)
+
+    def test_details_post(self):
+        with app.test_client() as client:
+            try:
+                resp = client.get(f"/posts/{self.post_id}")
+                html = resp.get_data(as_text=True)
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we tested if user couldsee the page holding the details of a post")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+            else:
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn("<h2>TestPostTitle</h2>", html)
+                self.assertIn("TestUser", html)
+                self.assertIn("Tasty", html)
+                self.assertIn("<button> &lt; Cancel &lt; </button>", html)
+                self.assertIn("<button>Edit</button>", html)
+                self.assertIn("<button>X Delete X</button>", html)
+
+    def test_show_edit_post_form(self):
+        with app.test_client() as client:
+            try:
+                resp = client.get(f"/posts/{self.post_id}/edit")
+                html = resp.get_data(as_text=True)
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we test if user is seeing the page where they can edit their post")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+            else:
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn("<h1>Edit A Post</h1>", html)
+                
+                self.assertIn("Title:", html)
+                self.assertIn(f"{self.post.title}", html)
+
+                self.assertIn("Content:", html)
+                self.assertIn(f"{self.post.content}", html)
+
+                self.assertIn("<button> &lt; Cancel &lt; </button>", html)
+                self.assertIn("<button>Save</button>", html)
+
+    def test_show_edit_post_form_redirect(self):
+        with app.test_client() as client:
+            try:
+                d = {
+                    "title": "test post title changed",
+                    "content": self.post.content + 'changed'
+                }
+                resp = client.post(f"/posts/{self.post_id}/edit", data=d, follow_redirects=False)
+                html = resp.get_data(as_text=True)
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we submit a edit post request and see if user is being redirected to the right location")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+            else:
+                self.assertEqual(resp.status_code, 302)
+                self.assertEqual(resp.location, f"http://localhost/posts/{self.post.id}")
+
+    def test_show_edit_post_form_redirect_followed(self):
+        with app.test_client() as client:
+            try:
+                d = {
+                    "title": "test post title changed",
+                    "content": self.post.content + ' changed!'
+                }
+                resp = client.post(f"/posts/{self.post_id}/edit", data=d, follow_redirects=True)
+                html = resp.get_data(as_text=True)
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we submit a edit post request and see if user is succesfully landing on the redirected location")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+            else:
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn("<h2>test post title changed</h2>", html)
+                self.assertIn(d["content"], html)
+                self.assertIn("TestUser", html)
+                self.assertIn("Tasty", html)
+                self.assertIn("<button> &lt; Cancel &lt; </button>", html)
+                self.assertIn("<button>Edit</button>", html)
+                self.assertIn("<button>X Delete X</button>", html)
+
+    def test_new_post_form(self):
+        with app.test_client() as client:
+            try:
+                resp = client.get(f"/users/{self.user_id}/posts/new")
+                html = resp.get_data(as_text=True)
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we test if the user is being presented the new post form correctly")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+            else:
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn(f"<h2>Add New Post for {self.user.first_name} {self.user.last_name}</h2>", html)
+                self.assertIn("<button> &lt; Cancel &lt; </button>", html)
     
-#     editing_title = request.form["title"]
-#     editing_content = request.form["content"]
+    def test_new_post_form_redirect(self):
+        with app.test_client() as client:
+            try:
+                d = {
+                        "title":"New Test Post Title",
+                        "content":"Content of New Test Post"
+                     }
+                resp = client.post(f"/users/{self.user_id}/posts/new",data=d, follow_redirects=False)
+                html = resp.get_data(as_text=True)
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we test if the user is being redirected to the correct location after submitting the add new post form")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+            else:
+                self.assertEqual(resp.status_code, 302)
+                self.assertEqual(resp.location, f"http://localhost/users/{self.user_id}")
     
-#     post.title = editing_title
-#     post.content = editing_content
+    def test_new_post_form_redirect_followed(self):
+        with app.test_client() as client:
+            try:
+                d = {
+                        "title":"New Test Post Title",
+                        "content":"Content of New Test Post"
+                     }
+                resp = client.post(f"/users/{self.user_id}/posts/new",data=d, follow_redirects=True)
+                html = resp.get_data(as_text=True)
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we test if the user is being redirected to the correct location after submitting the add new post form")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+            else:
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn(d["title"],html)
+                self.assertIn(f"<h2>{self.user.first_name} {self.user.last_name}</h2>",html)
+                self.assertIn("<button>Add Post</button>",html)
 
-#     db.session.add(post)
-#     db.session.commit()
+    def test_delete_post_redirect(self):
+        with app.test_client() as client:
+            try:
+                resp = client.post(f"/posts/{self.post_id}/delete", follow_redirects=False)
+                html = resp.get_data(as_text=True)
 
-#     return redirect(f"/posts/{post.id}")
+                self.assertEqual(resp.status_code, 302)
+                self.assertEqual(resp.location, f"http://localhost/users/{self.user_id}")
 
-# # # POST /posts/<int:post_id>/delete
-# @app.route('/posts/<int:post_id>/delete', methods=["POST"])
-# def delete_post(post_id):
-#     """Delete the post. redirect to user details page"""
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we test if user is correctly redirected to the correct location after pressing the delete button on a post")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                
 
-#     post = Post.query.get(post_id)
-#     #save author id int for redirecting after deletion
-#     post_author_id = post.author_user.id
-#     db.session.delete(post)
-#     db.session.commit()
+    def test_delete_post_redirect_followed(self):
+        
+        with app.test_client() as client:
+            try:
+                # Pythons Native Debugger here to help ^_^ !! 
+                # import pdb
+                # pdb.set_trace()
 
-#     return redirect(f'/users/{post_author_id}')
+                #self.user object instance was becoming dettached from the session after post was deleted.
+                # print(self.user)
+
+                resp = client.post(f"/posts/{self.post_id}/delete", follow_redirects=True)
+                html = resp.get_data(as_text=True)
+
+                # reputting the user object instance back into the test session
+                self.user = User.query.get(self.user_id)
+                # print(self.user)
+
+            except Exception as e:
+                print("\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+                print("Exception Error where we test if user is correctly landing back at the users detail page after delete route is followed ")
+                print("An exception occurred:")
+                print("Type:", type(e).__name__)
+                print("Value:", str(e))
+                print("Traceback:", traceback.format_exc())
+                print("#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
+            else:
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn(f"<h2>{self.user.first_name} {self.user.last_name}</h2>",html)
+                self.assertIn("<button>Add Post</button>",html)
