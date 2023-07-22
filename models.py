@@ -10,7 +10,18 @@ def connect_db(app):
 # MODELS BELOW:
 # All models should subclass db.Model
 class User(db.Model):
-    """ Users Table"""
+    """ 
+        Users Table
+
+        same as saying:
+        CREATE TABLE users (
+            id SERIAL PRIMARY KEY,
+            first_name VARCHAR(50) NOT NULL,
+            last_name VARCHAR(50),
+            img_url TEXT NOT NULL DEFAULT 'no_url_given'
+        );
+
+    """
     # Specify the tablename with __tablename__
     __tablename__ = 'users'
     
@@ -41,7 +52,21 @@ class User(db.Model):
         return f"I'm {self.first_name} {self.last_name}"
     
 class Post(db.Model):
-    """ Posts Table """
+    """
+        Posts Table 
+
+        Same as saying:
+        CREATE TABLE posts (
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(100) NOT NULL,
+            content TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT NOW(),
+            user_id INTEGER,
+            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+        );
+
+    
+    """
     __tablename__ = 'posts'
     
     # Columns
@@ -50,12 +75,23 @@ class Post(db.Model):
     content = db.Column(db.Text(), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     
-    # Foreign keys
-    # [name_of_key_in_posts] = db.Column(db.[datatype] , db.ForeignKey('[model_table_name].[model_table_columns_name]'))
+    # #Foreign keys
+    # #added a ondelete contraint to the user_id foreignkey in attempt to delte post when user is deleted.
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
+    # # That did not work, that ended up deleting the user  
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     # Relationship
-    author_user = db.relationship('User', backref='posts')
+    # # single_parent = true, cascade='all, delete-orphan' was not enough to delete posts when user was deleted
+    # author_user = db.relationship('User', backref='posts', single_parent=True, cascade='all, delete-orphan')
+    # # ^ that one didnt work trying this one V that didnt give any errors
+    author_user = db.relationship('User', backref=db.backref('posts', single_parent=True, cascade='all, delete-orphan'))
+
+    # # ILL try this if the above does not work
+    # # Add the ForeignKeyConstraint for user_id with ON DELETE CASCADE behavior
+    # __table_args__ = (
+    #     ForeignKeyConstraint([user_id], ['users.id'], ondelete='CASCADE'),
+    # )
 
     @classmethod
     def get_by_user(cls, usr):
@@ -82,8 +118,6 @@ class Post(db.Model):
 
         return new_post
     
-    
-
     def __repr__(self):
         p = self
         return f"<Post id#={p.id} | title={p.title} | created_at={p.created_at}>"

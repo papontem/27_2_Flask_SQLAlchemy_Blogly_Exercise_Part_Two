@@ -16,11 +16,11 @@
 <form action="/posts/{{ post.id }}/edit">
     <button>Edit</button>
 </form>
-<!-- NEED TO ADD DELETE ROUTE FOR POST -->
+
 <form
     id="delete_button_form"
-    action=""
-    method="">
+    action="/posts/{{ post.id }}/delete"
+    method="POST">
     <button>X Delete X</button>
 </form>
 {% endblock %}

@@ -145,14 +145,14 @@ def details_post(post_id):
 
 # # GET /posts/<int:post_id>/edit
 @app.route('/posts/<int:post_id>/edit')
-def func2(post_id):
+def show_edit_post_form(post_id):
     """ Show form to edit a post, and to cancel (back to user page). """
     post = Post.query.get_or_404(post_id)
     return render_template('edit_post.html', post=post)
 
-# # POST /posts/[post-id]/edit
+# # POST /posts/<int:post_id>/edit
 @app.route('/posts/<int:post_id>/edit', methods=["POST"])
-def func1(post_id):
+def edit_post_form_submitted(post_id):
     """ Handle editing of a post. Redirect back to the post view. """
     post = Post.query.get_or_404(post_id)
     
@@ -167,9 +167,15 @@ def func1(post_id):
 
     return redirect(f"/posts/{post.id}")
 
-# TODO: DELETE POST
-# # POST /posts/[post-id]/delete
-# @app.route('/')
-# def func0():
-#     """Delete the post."""
-#     return
+# # POST /posts/<int:post_id>/delete
+@app.route('/posts/<int:post_id>/delete', methods=["POST"])
+def delete_post(post_id):
+    """Delete the post. redirect to user details page"""
+
+    post = Post.query.get(post_id)
+    #save author id int for redirecting after deletion
+    post_author_id = post.author_user.id
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect(f'/users/{post_author_id}')
