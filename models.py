@@ -82,28 +82,12 @@ class Post(db.Model):
     # setting up sqlalchemy relationship to handle user_id foreign keys and their contraints primarily on the server side. 
     # by using the db = SQLAlchemy() object and calling the backref() method, 
     author_user = db.relationship('User', backref=db.backref('posts', single_parent=True, cascade='all, delete-orphan'))
-    
+
     # # ILL try this if the above does not work
     # # Add the ForeignKeyConstraint for user_id with ON DELETE CASCADE behavior
     # __table_args__ = (
     #     ForeignKeyConstraint([user_id], ['users.id'], ondelete='CASCADE'),
     # )
-
-    @classmethod
-    def get_by_user(cls, usr):
-        """ When given a 'usr', assuming its a user object instance, this function returns posts made by that user """
-        return usr.posts
-    
-    @classmethod
-    def get_all_posts_with_users(cls):
-        # join between the users and posts tables
-        query_result = db.session.query(User, cls).join(cls, User.id == cls.user_id).all()
-
-        # # Query the Post model and include the User relationship
-        # query_result = Post.query.options(db.joinedload('author')).all()
-
-        # The result will be a list of tuples, where each tuple contains a User object and a Post object.
-        return query_result
 
     def create_post(author, title, content):
         # Create a new Post object and set its attributes, have sqlalchemy server call its now() function for making datetime values
