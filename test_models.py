@@ -29,13 +29,6 @@ class UserModelTestCase(TestCase):
         db.session.add_all([test_user,test_user_2])
         db.session.commit()
 
-        test_post_data = {"title":"TestPostTitle", "content":"Test Post Content"}
-        test_post_2_data = {"title":"TestPostTitle version 2", "content":"Test Post Content version 2"}
-        test_post = Post.create_post(test_user,test_post_data["title"],test_post_data["content"])
-        test_post_2 = Post.create_post(test_user_2,test_post_2_data["title"],test_post_2_data["content"])
-        
-        db.session.add_all([test_post,test_post_2])
-        db.session.commit()
         
         self.user_id = test_user.id
         self.user = test_user
@@ -43,12 +36,19 @@ class UserModelTestCase(TestCase):
         self.user_2_id = test_user_2
         self.user_2 = test_user_2
 
+        # test_post_data = {"title":"TestPostTitle", "content":"Test Post Content"}
+        # test_post_2_data = {"title":"TestPostTitle version 2", "content":"Test Post Content version 2"}
+        # test_post = Post.create_post(test_user,test_post_data["title"],test_post_data["content"])
+        # test_post_2 = Post.create_post(test_user_2,test_post_2_data["title"],test_post_2_data["content"])
+        
+        # db.session.add_all([test_post,test_post_2])
+        # db.session.commit()
 
-        self.post_id = test_post.id
-        self.post = test_post
+        # self.post_id = test_post.id
+        # self.post = test_post
 
-        self.post_2_id = test_post_2.id
-        self.post_2 = test_post_2
+        # self.post_2_id = test_post_2.id
+        # self.post_2 = test_post_2
 
     def tearDown(self):
         """Clean up any fouled transaction."""
@@ -66,7 +66,7 @@ class UserModelTestCase(TestCase):
         query_result1 = User.get_all_first_name('TestUser')
         query_result2 = User.get_all_first_name('TestUser2')
 
-        # ADD THE ASSERT
+        
         self.assertEqual(query_result1,[self.user])
         self.assertEqual(query_result2,[self.user_2])
     
@@ -76,7 +76,7 @@ class UserModelTestCase(TestCase):
         query_result1 = User.get_all_last_name('Tattertot')
         query_result2 = User.get_all_last_name('FrenchFry')
 
-        # ADD THE ASSERT
+        
         self.assertEqual(query_result1,[self.user])
         self.assertEqual(query_result2,[self.user_2])
 
@@ -106,13 +106,6 @@ class PostModelTestCase(TestCase):
         db.session.add_all([test_user,test_user_2])
         db.session.commit()
 
-        test_post_data = {"title":"TestPostTitle", "content":"Test Post Content"}
-        test_post_2_data = {"title":"TestPostTitle version 2", "content":"Test Post Content version 2"}
-        test_post = Post.create_post(test_user,test_post_data["title"],test_post_data["content"])
-        test_post_2 = Post.create_post(test_user_2,test_post_2_data["title"],test_post_2_data["content"])
-        
-        db.session.add_all([test_post,test_post_2])
-        db.session.commit()
         
         self.user_id = test_user.id
         self.user = test_user
@@ -120,49 +113,30 @@ class PostModelTestCase(TestCase):
         self.user_2_id = test_user_2
         self.user_2 = test_user_2
 
+        self.test_post_data = {"title":"TestPostTitle", "content":"Test Post Content"}
+        self.test_post_2_data = {"title":"TestPostTitle version 2", "content":"Test Post Content version 2"}
 
-        self.post_id = test_post.id
-        self.post = test_post
+        # test_post = Post.create_post(test_user,test_post_data["title"],test_post_data["content"])
+        # test_post_2 = Post.create_post(test_user_2,test_post_2_data["title"],test_post_2_data["content"])
+        
+        # db.session.add_all([test_post,test_post_2])
+        # db.session.commit()
 
-        self.post_2_id = test_post_2.id
-        self.post_2 = test_post_2
+        # self.post_id = test_post.id
+        # self.post = test_post
+
+        # self.post_2_id = test_post_2.id
+        # self.post_2 = test_post_2
 
     def tearDown(self):
         """Clean up any fouled transaction."""
 
         db.session.rollback()
 
+    def test_create_post(self):
 
-    # def test_greet(self):
-        
-    #     self.assertEqual(self.user.greet(), "I'm TestUser Tattertot")
-    #     self.assertEqual(self.user_2.greet(), "I'm TestUser2 FrenchFry")
+        test_post   = Post.create_post(  self.user,   self.test_post_data["title"],   self.test_post_data["content"])
+        test_post_2 = Post.create_post(self.user_2, self.test_post_2_data["title"], self.test_post_2_data["content"])
 
-
-    # def test_get_all_first_name(self): 
-
-    #     query_result1 = User.get_all_first_name('TestUser')
-    #     query_result2 = User.get_all_first_name('TestUser2')
-
-    #     # ADD THE ASSERT
-    #     self.assertEqual(query_result1,[self.user])
-    #     self.assertEqual(query_result2,[self.user_2])
-    
-    
-    # def test_get_all_last_name(self):
-
-    #     query_result1 = User.get_all_last_name('Tattertot')
-    #     query_result2 = User.get_all_last_name('FrenchFry')
-
-    #     # ADD THE ASSERT
-    #     self.assertEqual(query_result1,[self.user])
-    #     self.assertEqual(query_result2,[self.user_2])
-
-    
-    # def test_get_all_Users(self):
-
-    #     query_result = User.get_all_users()
-
-    #     # ADD THE ASSERT
-    #     self.assertEqual(query_result,[self.user, self.user_2])
-    
+        self.assertEqual(test_post, Post.query.filter_by(title=test_post.title).first())
+        self.assertEqual(test_post_2, Post.query.filter_by(title=test_post_2.title).first())
