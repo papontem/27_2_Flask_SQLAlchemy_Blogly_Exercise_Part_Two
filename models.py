@@ -76,17 +76,13 @@ class Post(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     
     # #Foreign keys
-    # #added a ondelete contraint to the user_id foreignkey in attempt to delte post when user is deleted.
-    # user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
-    # # That did not work, that ended up deleting the user  
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     # Relationship
-    # # single_parent = true, cascade='all, delete-orphan' was not enough to delete posts when user was deleted
-    # author_user = db.relationship('User', backref='posts', single_parent=True, cascade='all, delete-orphan')
-    # # ^ that one didnt work trying this one V that didnt give any errors
+    # setting up sqlalchemy relationship to handle user_id foreign keys and their contraints primarily on the server side. 
+    # by using the db = SQLAlchemy() object and calling the backref() method, 
     author_user = db.relationship('User', backref=db.backref('posts', single_parent=True, cascade='all, delete-orphan'))
-
+    
     # # ILL try this if the above does not work
     # # Add the ForeignKeyConstraint for user_id with ON DELETE CASCADE behavior
     # __table_args__ = (

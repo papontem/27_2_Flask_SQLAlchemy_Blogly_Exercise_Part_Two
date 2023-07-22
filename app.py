@@ -26,7 +26,7 @@ def homepage():
 
 @app.route('/users')
 def list_user():
-    """ 
+    """ a lists of all posts titles
         Show all users.
         Make these links to view the detail page for the user.
         Have a link here to the add-user form.
@@ -129,6 +129,18 @@ def new_post_form_submitted(user_id):
     db.session.commit()
     
     return redirect(f'/users/{user.id}')
+
+# GET /posts 
+@app.route('/posts')
+def list_posts():
+    """ 
+        Show posts
+        Show only their titles within an anchor tag , and their author within an anchor tag
+        Make these links to view the detail page for the post, and for the user
+    """
+    posts = Post.query.all()
+
+    return render_template("posts.html", posts=posts)
 
 
 # # GET /posts/<int:post_id>
